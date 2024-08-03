@@ -13,11 +13,11 @@ module.exports = {
       password: process.env.DATABASE_ACCESS_KEY,
     },
     migrations: {
-      directory: "./db/migrations",
+      directory: "./src/db/migrations",
       tableName: "knex_migrations",
     },
     seeds: {
-      directory: "./db/seeds",
+      directory: "./src/db/seeds",
     },
     pool: {
       min: 0,
