@@ -1,7 +1,6 @@
 const { Router } = require('express');
 const jwt = require('jsonwebtoken');
-const { db } = require('../db/db');
-const { statEmitter } = require('../../index');
+const { db, statEmitter } = require('../db/db');
 const { validateUserCreation, validateUserId, validateUserModification } = require('../controllers/validations/users/users-validations');
 const { tokenValidationMiddleware } = require('../controllers/middlewares/auth-token-middleware');
 

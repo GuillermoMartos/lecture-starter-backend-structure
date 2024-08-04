@@ -1,13 +1,11 @@
 const express = require('express');
-const EventEmitter = require('events');
-const { db } = require('./src/db/db');
+const { db, statEmitter } = require('./src/db/db');
 const { initRoutes } = require('./src/routes/routes');
 
 const app = express();
 
 const port = 4066;
 
-const statEmitter = new EventEmitter();
 const stats = {
     totalUsers: 3,
     totalBets: 1,
@@ -47,4 +45,3 @@ const server = app.listen(port, () => {
 module.exports = {
     app, server, db, statEmitter,
 };
-console.log('Variables exportadas en index.js');

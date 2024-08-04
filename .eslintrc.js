@@ -12,12 +12,15 @@ module.exports = {
         sourceType: 'module',
     },
     rules: {
-        'no-console': 'off',
         'no-unused-vars': 'warn',
         semi: ['error', 'always'],
         quotes: ['error', 'single'],
         indent: ['error', 4],
         'prefer-const': [1],
+        'no-console': [
+            'warn',
+            { allow: ['error', 'log'] },
+        ],
     },
     overrides: [
         {
