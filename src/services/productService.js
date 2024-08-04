@@ -1,14 +1,20 @@
 const productRepository = require('../repositories/productRepository');
 
 const createNewTransactionService = async (transactionData) => {
-    const user = await productRepository.createNewTransactionRepository(transactionData);
-    return user;
+    const newTransaction = await productRepository.createNewTransactionRepository(transactionData);
+    return newTransaction;
 };
+
 const createNewEventService = async (transactionData) => {
-    const user = await productRepository.createNewEventRepository(transactionData);
-    return user;
+    const newEvent = await productRepository.createNewEventRepository(transactionData);
+    return newEvent;
+};
+
+const createNewBetService = async (transactionData) => {
+    const newBet = await productRepository.createNewBetRepository(transactionData);
+    return newBet;
 };
 
 module.exports = {
-    createNewTransactionService, createNewEventService,
+    createNewTransactionService, createNewEventService, createNewBetService,
 };
