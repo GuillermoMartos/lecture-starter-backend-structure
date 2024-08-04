@@ -1,42 +1,43 @@
-const chai = require("chai");
-const chaiHttp = require("chai-http");
-const jwt = require("jsonwebtoken");
+const chai = require('chai');
+const chaiHttp = require('chai-http');
+const jwt = require('jsonwebtoken');
 
-const { server } = require("../index");
+const { server } = require('../index');
+
 const { expect } = chai;
 
 console.log = () => {};
 
 chai.use(chaiHttp);
 
-describe("STATS_ROUTES", () => {
-  afterAll(() => {
-    server.close();
-  });
-
-  describe("STATS_ROUTE_GET", () => {
-    it("GET_STATS", async () => {
-      const token = jwt.sign({ type: "admin" }, process.env.JWT_SECRET);
-      const { status, body } = await chai
-        .request(server)
-        .get(`/stats`)
-        .set("authorization", `Bearer ${token}`);
-      expect(status).to.be.equal(200);
-      expect(body.totalUsers).to.be.equal(4);
-      expect(body.totalBets).to.be.equal(2);
-      expect(body.totalEvents).to.be.equal(2);
+describe('STATS_ROUTES', () => {
+    afterAll(() => {
+        server.close();
     });
 
-    it("GET_STATS_INVALID_TOKEN", async () => {
-      const token = jwt.sign({ type: "client" }, process.env.JWT_SECRET);
-      const { status, body } = await chai
-        .request(server)
-        .get(`/stats`)
-        .set("authorization", `Bearer ${token}`)
-        .send();
+    describe('STATS_ROUTE_GET', () => {
+        it('GET_STATS', async () => {
+            const token = jwt.sign({ type: 'admin' }, process.env.JWT_SECRET);
+            const { status, body } = await chai
+                .request(server)
+                .get('/stats')
+                .set('authorization', `Bearer ${token}`);
+            expect(status).to.be.equal(200);
+            expect(body.totalUsers).to.be.equal(4);
+            expect(body.totalBets).to.be.equal(2);
+            expect(body.totalEvents).to.be.equal(2);
+        });
 
-      expect(status).to.be.equal(401);
-      expect(body.error).to.be.equal("Not Authorized");
+        it('GET_STATS_INVALID_TOKEN', async () => {
+            const token = jwt.sign({ type: 'client' }, process.env.JWT_SECRET);
+            const { status, body } = await chai
+                .request(server)
+                .get('/stats')
+                .set('authorization', `Bearer ${token}`)
+                .send();
+
+            expect(status).to.be.equal(401);
+            expect(body.error).to.be.equal('Not Authorized');
+        });
     });
-  });
 });

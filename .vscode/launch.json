@@ -1,0 +1,22 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Server",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/index.js", // Cambia esto a la ruta de tu archivo principal del servidor
+            "cwd": "${workspaceFolder}",
+            "protocol": "inspector",
+            "restart": true,
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "env": {
+              "NODE_ENV": "development"
+            },
+          }
+    ]
+}
