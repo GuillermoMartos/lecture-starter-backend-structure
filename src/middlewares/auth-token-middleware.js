@@ -17,4 +17,13 @@ const tokenValidationMiddleware = (req, res, next) => {
     return next();
 };
 
-module.exports = { tokenValidationMiddleware };
+const adminTokenValidationMiddleware = (req, res, next) => {
+    const { tokenPayload } = req.body;
+    if (tokenPayload.type !== 'admin') {
+        return res.status(401).send({ error: 'Not Authorized' });
+    }
+
+    return next();
+};
+
+module.exports = { tokenValidationMiddleware, adminTokenValidationMiddleware };

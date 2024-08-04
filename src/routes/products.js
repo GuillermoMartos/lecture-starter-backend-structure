@@ -1,25 +1,16 @@
 const { Router } = require('express');
-const { db } = require('../../index');
-
-const { transactionsRequestSchema } = require('../controllers/validations/products/transactions-validations');
-const { tokenValidationMiddleware } = require('../controllers/middlewares/auth-token-middleware');
+const { tokenValidationMiddleware, adminTokenValidationMiddleware } = require('../middlewares/auth-token-middleware');
+const productController = require('../controllers/productController');
 
 const router = Router();
-const productRoutes = {
-    TRANSACTIONS: '/transactions',
-    EVENTS: '/events',
-    EVENTS_ID: '/events/:id',
-    BETS: '/bets',
-    STATS: '/stats',
-};
 
-router.post(productRoutes.TRANSACTIONS, tokenValidationMiddleware, (req, res) => {
-    const isValidResult = transactionsRequestSchema.validate(req.body);
-    if (isValidResult.error) {
-        res.status(400).send({ error: isValidResult.error.details[0].message });
-        return;
-    }
-
+router.post(
+    '/transactions',
+    tokenValidationMiddleware,
+    adminTokenValidationMiddleware,
+    productController.createNewTransaction,
+);
+/*
     db('user').where('id', req.body.userId).then(([user]) => {
         if (!user) {
             res.status(400).send({ error: 'User does not exist' });
@@ -49,10 +40,9 @@ router.post(productRoutes.TRANSACTIONS, tokenValidationMiddleware, (req, res) =>
         });
     }).catch((err) => {
         res.status(500).send('Internal Server Error');
-    });
-});
+    }); */
 
-router.post(productRoutes.EVENTS, (req, res) => {
+router.post('/events', (req, res) => {
     const schema = joi.object({
         id: joi.string().uuid(),
         type: joi.string().required(),
@@ -134,7 +124,7 @@ router.post(productRoutes.EVENTS, (req, res) => {
     }
 });
 
-router.post(productRoutes.BETS, (req, res) => {
+router.post('/bets', (req, res) => {
     const schema = joi.object({
         id: joi.string().uuid(),
         eventId: joi.string().uuid().required(),
@@ -231,7 +221,7 @@ router.post(productRoutes.BETS, (req, res) => {
     }
 });
 
-router.put(productRoutes.EVENTS_ID, (req, res) => {
+router.put('/events/:id', (req, res) => {
     const schema = joi.object({
         score: joi.string().required(),
     }).required();
@@ -306,7 +296,7 @@ router.put(productRoutes.EVENTS_ID, (req, res) => {
     }
 });
 
-router.get(productRoutes.STATS, (req, res) => {
+router.get('/stats', (req, res) => {
     try {
         const ak = 'authorization';
         let token = req.headers[ak];
@@ -329,4 +319,4 @@ router.get(productRoutes.STATS, (req, res) => {
     }
 });
 
-module.exports = { router, productRoutes };
+module.exports = { router };

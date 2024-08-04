@@ -1,11 +1,13 @@
 const { router: usersRouter } = require('./users');
-const { router: productsRouter, productRoutes } = require('./products');
+const { router: productsRouter } = require('./products');
+const { requestLoggerMiddleware } = require('../middlewares/logger-middleware');
 /* import { loggerMiddleware } from '../middlewares/logger.middleware.js'; */
 
 const initRoutes = (app) => {
-    /* app.use(loggerMiddleware); */
+    app.use(requestLoggerMiddleware);
     app.use('/users', usersRouter);
-    app.use(Object.values(productRoutes), productsRouter);
+    app.all('*', productsRouter);
+    /* app.use(responseMiddleware); */
 };
 
 module.exports = { initRoutes };
