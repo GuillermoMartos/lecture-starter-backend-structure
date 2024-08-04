@@ -13,7 +13,16 @@ const createNewTransaction = async (req, res) => {
         res.status(500).send('Internal Server Error');
     }
 };
+const createNewEvent = async (req, res) => {
+    try {
+        const newTransaction = await productService.createNewEventService(req.body);
+        res.send({ ...newTransaction });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send('Internal Server Error');
+    }
+};
 
 module.exports = {
-    createNewTransaction,
+    createNewTransaction, createNewEvent,
 };
