@@ -195,7 +195,7 @@ const updateEventRepository = async (eventData, id) => {
                 win: true,
             });
 
-            const user = await db('user').where('id', bet.user_id);
+            const [user, ...discard] = await db('user').where('id', bet.user_id);
             await db('user').where('id', bet.user_id).update({
                 balance: user.balance + (bet.bet_amount * bet.multiplier),
             });
