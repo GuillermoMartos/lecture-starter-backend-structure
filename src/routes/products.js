@@ -13,6 +13,8 @@ router.post(
 
 router.post('/events', tokenValidationMiddleware, adminTokenValidationMiddleware, productController.createNewEvent);
 
+router.put('/events/:id', tokenValidationMiddleware, adminTokenValidationMiddleware, productController.updateEvent);
+
 router.post('/bets', tokenValidationMiddleware, productController.createNewBet);
 
 router.get('/stats', tokenValidationMiddleware, adminTokenValidationMiddleware, productController.getStats);

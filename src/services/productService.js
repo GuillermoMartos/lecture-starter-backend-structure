@@ -11,6 +11,11 @@ const createNewEventService = async (eventData) => {
     return newEvent;
 };
 
+const updateEventService = async (eventData, { id }) => {
+    const newEvent = await productRepository.updateEventRepository(eventData, id);
+    return newEvent;
+};
+
 const createNewBetService = async (betData) => {
     const newBet = await productRepository.createNewBetRepository(betData);
     return newBet;
@@ -34,5 +39,9 @@ const getStatsService = async () => {
 };
 
 module.exports = {
-    createNewTransactionService, createNewEventService, createNewBetService, getStatsService,
+    createNewTransactionService,
+    createNewEventService,
+    createNewBetService,
+    getStatsService,
+    updateEventService,
 };

@@ -1,6 +1,7 @@
 const { db, statEmitter } = require('../db/db');
 const { betCreationModel } = require('../models/products/betCreationModel');
 const { eventCreationModel } = require('../models/products/eventCreationModel');
+const { eventModificationModel } = require('../models/products/eventModificationModel');
 const { transactionCreationModel } = require('../models/products/transactionCreationModel');
 
 const createNewTransactionRepository = async (transactionData) => {
@@ -165,6 +166,61 @@ const createNewBetRepository = async (betData) => {
     };
 };
 
+const updateEventRepository = async (eventData, id) => {
+    const eventDataCopy = eventData;
+    delete eventDataCopy.tokenPayload; // se necesita????? siii sacarlo con estilo
+    const { error: validationError } = eventModificationModel.validate(eventDataCopy);
+    if (validationError) {
+        throw validationError;
+    }
+
+    const eventId = id;
+
+    const betsFound = await db('bet').where('event_id', eventId).andWhere('win', null);
+    const [w1, w2] = eventDataCopy.score.split(':');
+    let result;
+    if (+w1 > +w2) {
+        result = 'w1';
+    } else if (+w2 > +w1) {
+        result = 'w2';
+    } else {
+        result = 'x';
+    }
+    const [eventFound, ...rest] = await db('event').where('id', eventId).update({ score: eventDataCopy.score }).returning('*');
+
+    betsFound.map(async (bet) => {
+        if (bet.prediction === result) {
+            await db('bet').where('id', bet.id).update({
+                win: true,
+            });
+
+            const user = await db('user').where('id', bet.user_id);
+            await db('user').where('id', bet.user_id).update({
+                balance: user.balance + (bet.bet_amount * bet.multiplier),
+            });
+        } else if (bet.prediction !== result) {
+            await db('bet').where('id', bet.id).update({
+                win: false,
+            });
+        }
+    });
+
+    ['bet_amount', 'event_id', 'away_team', 'home_team', 'odds_id', 'start_at', 'updated_at', 'created_at'].forEach((whatakey) => {
+        const index = whatakey.indexOf('_');
+        let newKey = whatakey.replace('_', '');
+        newKey = newKey.split('');
+        newKey[index] = newKey[index].toUpperCase();
+        newKey = newKey.join('');
+        eventFound[newKey] = eventFound[whatakey];
+        delete eventFound[whatakey];
+    });
+
+    return { ...eventFound };
+};
+
 module.exports = {
-    createNewTransactionRepository, createNewEventRepository, createNewBetRepository,
+    createNewTransactionRepository,
+    createNewEventRepository,
+    createNewBetRepository,
+    updateEventRepository,
 };
