@@ -1,6 +1,6 @@
 const userService = require('../services/userService');
 
-const getUserByID = async (req, res) => {
+const getUserByID = async (req, res, next) => {
     try {
         const result = await userService.getUserByIDService(req.params);
         if (!result) {
@@ -9,27 +9,20 @@ const getUserByID = async (req, res) => {
         }
         res.send({ ...result });
     } catch (error) {
-        console.log(error);
-        res.status(500).send('Internal Server Error');
+        next(error);
     }
 };
 
-const createNewUser = async (req, res) => {
+const createNewUser = async (req, res, next) => {
     try {
         const newUser = await userService.createNewUserService(req.body);
         res.send({ ...newUser });
     } catch (error) {
-        if (error.code === '23505') {
-            res.status(400).send({
-                error: error.detail,
-            });
-            return;
-        }
-        res.status(500).send('Internal Server Error');
+        next(error);
     }
 };
 
-const updateUser = async (req, res) => {
+const updateUser = async (req, res, next) => {
     if (req.params.id !== req.body.tokenPayload.id) {
         res.status(401).send({ error: 'UserId mismatch' });
         return;
@@ -38,13 +31,7 @@ const updateUser = async (req, res) => {
         const updatedUser = await userService.updateUserService(req.body);
         res.send({ ...updatedUser });
     } catch (error) {
-        if (error.code === '23505') {
-            res.status(400).send({
-                error: error.detail,
-            });
-            return;
-        }
-        res.status(500).send('Internal Server Error');
+        next(error);
     }
 };
 

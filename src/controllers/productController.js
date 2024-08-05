@@ -1,55 +1,46 @@
 const productService = require('../services/productService');
 
-const createNewTransaction = async (req, res) => {
+const createNewTransaction = async (req, res, next) => {
     try {
         const newTransaction = await productService.createNewTransactionService(req.body);
         res.send({ ...newTransaction });
     } catch (error) {
-        if (error.code === '23505') {
-            res.status(400).send({
-                error: error.detail,
-            });
-        }
-        res.status(500).send('Internal Server Error');
+        next(error);
     }
 };
-const createNewEvent = async (req, res) => {
+const createNewEvent = async (req, res, next) => {
     try {
         const newTransaction = await productService.createNewEventService(req.body);
         res.send({ ...newTransaction });
     } catch (error) {
-        console.log(error);
-        res.status(500).send('Internal Server Error');
+        next(error);
     }
 };
 
-const updateEvent = async (req, res) => {
+const updateEvent = async (req, res, next) => {
     try {
         const updatedEvent = await productService.updateEventService(req.body, req.params);
         res.send({ ...updatedEvent });
     } catch (error) {
-        console.log(error);
-        res.status(500).send('Internal Server Error');
+        next(error);
     }
 };
 
-const createNewBet = async (req, res) => {
+const createNewBet = async (req, res, next) => {
     try {
         const newBet = await productService.createNewBetService(req.body);
         return res.send({ ...newBet });
     } catch (error) {
-        console.log(error);
-        return res.status(500).send('Internal Server Error');
+        return next(error);
     }
 };
 
-const getStats = async (req, res) => {
+const getStats = async (req, res, next) => {
     try {
         const stats = await productService.getStatsService(req.body);
         return res.send(stats);
     } catch (error) {
-        console.log(error);
-        return res.status(500).send('Internal Server Error');
+        return next(error);
     }
 };
 
