@@ -14,11 +14,10 @@ const errorHandlerMiddleware = (err, req, res, next) => {
     }
 
     if (err instanceof CustomError) {
-        // Si es un error personalizado, devolver el statusCode y el mensaje del error
         return res.status(err.statusCode).json({ error: err.message });
     }
 
-    console.error(err); // Para registro de errores
+    console.error(err);
     return res.status(500).json({
         error: 'Internal Server Error',
     });
