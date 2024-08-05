@@ -121,7 +121,7 @@ const createNewBetRepository = async (betData) => {
     }
     const [eventFound, ...rest] = await db('event').where('id', betDataCopy.event_id);
     if (!eventFound) {
-        throw new CustomError('Event not found', 400);
+        throw new CustomError('Event not found', 404);
     }
     const [oddsFound, ...discardRest] = await db('odds').where('id', eventFound.odds_id);
     if (!oddsFound) {
