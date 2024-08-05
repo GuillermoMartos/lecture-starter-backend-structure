@@ -15,7 +15,7 @@ const createNewTransactionRepository = async (transactionData) => {
 
     const [userFound, ...rest] = await db('user').where('id', transactionDataCopy.userId);
     if (!userFound) {
-        throw new Error({ error: 'User does not exist' });
+        throw new CustomError('User does not exist', 400);
     }
 
     transactionDataCopy.card_number = transactionDataCopy.cardNumber;
