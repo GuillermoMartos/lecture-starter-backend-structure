@@ -7,7 +7,7 @@ const getUserByIDService = async (userId) => {
 };
 
 const createNewUserService = async (userData) => {
-    const [user, ...rest] = await userRepository.createNewUserRepository(userData);
+    const user = await userRepository.createNewUserRepository(userData);
     const accessToken = jwt.sign({ id: user.id, type: user.type }, process.env.JWT_SECRET);
     return {
         ...user,

@@ -23,7 +23,7 @@
             "request": "launch",
             "name": "Debug Tests",
             "program": "${workspaceFolder}/node_modules/jest/bin/jest.js",
-            "args": ["./tests/user.test.js", "--forceExit", "--detectOpenHandles"],
+            "args": ["./tests/index.test.js", "--forceExit", "--detectOpenHandles"],
             "preLaunchTask": "npm: reset:db",
             "console": "integratedTerminal",
             "internalConsoleOptions": "neverOpen",

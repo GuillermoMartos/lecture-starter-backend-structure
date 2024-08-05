@@ -13,15 +13,12 @@ const createNewUserRepository = async (userData) => {
     if (validationError) {
         throw validationError;
     }
-    const newUser = await db('user').insert(copyData).returning('*');
-    if (!newUser) {
-        console.log('hola');
-    }
+    const [newUser, ...rest] = await db('user').insert(copyData).returning('*');
+    statEmitter.emit('newUser');
     newUser.createdAt = newUser.created_at;
     delete newUser.created_at;
     newUser.updatedAt = newUser.updated_at;
     delete newUser.updated_at;
-    statEmitter.emit('newUser');
     return newUser;
 };
 
