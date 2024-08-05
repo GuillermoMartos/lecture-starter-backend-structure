@@ -33,6 +33,16 @@ const createNewBet = async (req, res) => {
     }
 };
 
+const getStats = async (req, res) => {
+    try {
+        const stats = await productService.getStatsService(req.body);
+        return res.send(stats);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send('Internal Server Error');
+    }
+};
+
 module.exports = {
-    createNewTransaction, createNewEvent, createNewBet,
+    createNewTransaction, createNewEvent, createNewBet, getStats,
 };

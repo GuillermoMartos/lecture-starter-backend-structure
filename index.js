@@ -37,6 +37,9 @@ const server = app.listen(port, () => {
     statEmitter.on('newEvent', () => {
         stats.totalEvents = +1;
     });
+    statEmitter.on('getStats', () => {
+        statEmitter.emit('statsResult', stats);
+    });
 
     console.log(`App listening at http://localhost:${port}`);
 });
