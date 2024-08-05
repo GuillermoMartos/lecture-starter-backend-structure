@@ -29,13 +29,13 @@ app.get('/health', (req, res) => {
 
 const server = app.listen(port, () => {
     statEmitter.on('newUser', () => {
-        stats.totalUsers = +1;
+        stats.totalUsers += 1;
     });
     statEmitter.on('newBet', () => {
-        stats.totalBets = +1;
+        stats.totalBets += 1;
     });
     statEmitter.on('newEvent', () => {
-        stats.totalEvents = +1;
+        stats.totalEvents += 1;
     });
     statEmitter.on('getStats', () => {
         statEmitter.emit('statsResult', stats);
