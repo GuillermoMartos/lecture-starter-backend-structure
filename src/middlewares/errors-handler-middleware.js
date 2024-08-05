@@ -1,3 +1,5 @@
+const { CustomError } = require('../helpers/helper');
+
 const errorHandlerMiddleware = (err, req, res, next) => {
     if (err.code === '23505') {
         return res.status(400).json({
@@ -9,6 +11,11 @@ const errorHandlerMiddleware = (err, req, res, next) => {
         return res.status(400).json({
             error: err.details[0].message,
         });
+    }
+
+    if (err instanceof CustomError) {
+        // Si es un error personalizado, devolver el statusCode y el mensaje del error
+        return res.status(err.statusCode).json({ error: err.message });
     }
 
     console.error(err); // Para registro de errores

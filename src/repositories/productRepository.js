@@ -1,4 +1,5 @@
 const { db, statEmitter } = require('../db/db');
+const { CustomError } = require('../helpers/helper');
 const { betCreationModel } = require('../models/products/betCreationModel');
 const { eventCreationModel } = require('../models/products/eventCreationModel');
 const { eventModificationModel } = require('../models/products/eventModificationModel');
@@ -113,18 +114,18 @@ const createNewBetRepository = async (betData) => {
     const usersTable = await db.select().table('user');
     const user = await usersTable.find((_user) => _user.id === userId);
     if (!user) {
-        throw Error({ error: 'User does not exist' });
+        throw new CustomError('User does not exist', 400);
     }
     if (+user.balance < +betDataCopy.bet_amount) {
-        throw Error({ error: 'Not enough balance' });
+        throw new CustomError('Not enough balance', 400);
     }
     const [eventFound, ...rest] = await db('event').where('id', betDataCopy.event_id);
     if (!eventFound) {
-        throw Error({ error: 'Event not found' });
+        throw new CustomError('Event not found', 400);
     }
     const [oddsFound, ...discardRest] = await db('odds').where('id', eventFound.odds_id);
     if (!oddsFound) {
-        throw Error({ error: 'Odds not found' });
+        throw new CustomError('Odds not found', 400);
     }
     let multiplier;
     switch (betDataCopy.prediction) {
