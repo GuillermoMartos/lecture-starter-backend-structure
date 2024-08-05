@@ -93,7 +93,7 @@ const createNewEventRepository = async (eventData) => {
     });
     return {
         ...newEvent,
-        newOdd,
+        odds: { ...newOdd },
     };
 };
 
