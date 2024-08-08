@@ -1,5 +1,5 @@
 const { db, statEmitter } = require('../db/db');
-const { CustomError, snakeCaseToCamelCaseConverter } = require('../helpers/helper');
+const { CustomError, convertSnakeCaseToCamelCase, convertObjectPropertiesToSnakeCase } = require('../helpers/helper');
 const { betCreationModel } = require('../models/products/betCreationModel');
 const { eventCreationModel } = require('../models/products/eventCreationModel');
 const { eventModificationModel } = require('../models/products/eventModificationModel');
@@ -29,11 +29,7 @@ const createNewTransactionRepository = async (transactionData) => {
     await db('user').where('id', transactionDataCopy.user_id).update('balance', currentBalance);
 
     ['user_id', 'card_number', 'created_at', 'updated_at'].forEach((whatakey) => {
-        const index = whatakey.indexOf('_');
-        let newKey = whatakey.replace('_', '');
-        newKey = newKey.split('');
-        newKey[index] = newKey[index].toUpperCase();
-        newKey = newKey.join('');
+        const newKey = convertSnakeCaseToCamelCase(whatakey);
         newTransaction[newKey] = newTransaction[whatakey];
         delete newTransaction[whatakey];
     });
@@ -45,7 +41,7 @@ const createNewTransactionRepository = async (transactionData) => {
 };
 
 const createNewEventRepository = async (eventData) => {
-    const eventDataCopy = eventData;
+    let eventDataCopy = eventData;
     const transactionDataCopy = eventDataCopy;
     delete transactionDataCopy.tokenPayload; // se necesita?????? siiiii veamos de hacer dinamico
     const { error: validationError } = eventCreationModel.validate(transactionDataCopy);
@@ -53,19 +49,9 @@ const createNewEventRepository = async (eventData) => {
         throw validationError;
     }
 
-    eventDataCopy.odds.home_win = eventDataCopy.odds.homeWin;
-    delete eventDataCopy.odds.homeWin;
-    eventDataCopy.odds.away_win = eventDataCopy.odds.awayWin;
-    delete eventDataCopy.odds.awayWin;
+    eventDataCopy = convertObjectPropertiesToSnakeCase(eventDataCopy);
     const [newOdd, ...rest] = await db('odds').insert(eventDataCopy.odds).returning('*');
     delete eventDataCopy.odds;
-    eventDataCopy.away_team = eventDataCopy.awayTeam;
-    eventDataCopy.home_team = eventDataCopy.homeTeam;
-    eventDataCopy.start_at = eventDataCopy.startAt;
-    delete eventDataCopy.awayTeam;
-    delete eventDataCopy.homeTeam;
-    delete eventDataCopy.startAt;
-
     const [newEvent, ...discard] = await db('event').insert({
         ...eventDataCopy,
         odds_id: newOdd.id,
@@ -74,20 +60,12 @@ const createNewEventRepository = async (eventData) => {
     statEmitter.emit('newEvent');
 
     ['bet_amount', 'event_id', 'away_team', 'home_team', 'odds_id', 'start_at', 'updated_at', 'created_at'].forEach((whatakey) => {
-        const index = whatakey.indexOf('_');
-        let newKey = whatakey.replace('_', '');
-        newKey = newKey.split('');
-        newKey[index] = newKey[index].toUpperCase();
-        newKey = newKey.join('');
+        const newKey = convertSnakeCaseToCamelCase(whatakey);
         newEvent[newKey] = newEvent[whatakey];
         delete newEvent[whatakey];
     });
     ['home_win', 'away_win', 'created_at', 'updated_at'].forEach((whatakey) => {
-        const index = whatakey.indexOf('_');
-        let newKey = whatakey.replace('_', '');
-        newKey = newKey.split('');
-        newKey[index] = newKey[index].toUpperCase();
-        newKey = newKey.join('');
+        const newKey = convertSnakeCaseToCamelCase(whatakey);
         newOdd[newKey] = newOdd[whatakey];
         delete newOdd[whatakey];
     });
@@ -98,18 +76,14 @@ const createNewEventRepository = async (eventData) => {
 };
 
 const createNewBetRepository = async (betData) => {
-    const betDataCopy = betData;
+    let betDataCopy = betData;
     const userId = betDataCopy.tokenPayload.id;
-    delete betDataCopy.tokenPayload; // se necesita????? siii sacarlo con estilo
+    delete betDataCopy.tokenPayload;
     const { error: validationError } = betCreationModel.validate(betDataCopy);
     if (validationError) {
         throw validationError;
     }
-
-    betDataCopy.event_id = betDataCopy.eventId;
-    betDataCopy.bet_amount = betDataCopy.betAmount;
-    delete betDataCopy.eventId;
-    delete betDataCopy.betAmount;
+    betDataCopy = convertObjectPropertiesToSnakeCase(betDataCopy);
     betDataCopy.user_id = userId;
     const usersTable = await db.select().table('user');
     const user = await usersTable.find((_user) => _user.id === userId);
@@ -153,7 +127,7 @@ const createNewBetRepository = async (betData) => {
     statEmitter.emit('newBet');
 
     ['bet_amount', 'event_id', 'away_team', 'home_team', 'odds_id', 'start_at', 'updated_at', 'created_at', 'user_id'].forEach((whatakey) => {
-        const newKey = snakeCaseToCamelCaseConverter(whatakey);
+        const newKey = convertSnakeCaseToCamelCase(whatakey);
         newBet[newKey] = newBet[whatakey];
         delete newBet[whatakey];
     });
@@ -203,11 +177,7 @@ const updateEventRepository = async (eventData, id) => {
     });
 
     ['bet_amount', 'event_id', 'away_team', 'home_team', 'odds_id', 'start_at', 'updated_at', 'created_at'].forEach((whatakey) => {
-        const index = whatakey.indexOf('_');
-        let newKey = whatakey.replace('_', '');
-        newKey = newKey.split('');
-        newKey[index] = newKey[index].toUpperCase();
-        newKey = newKey.join('');
+        const newKey = convertSnakeCaseToCamelCase(whatakey);
         eventFound[newKey] = eventFound[whatakey];
         delete eventFound[whatakey];
     });
