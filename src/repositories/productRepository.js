@@ -1,5 +1,5 @@
 const { db, statEmitter } = require('../db/db');
-const { CustomError } = require('../helpers/helper');
+const { CustomError, snakeCaseToCamelCaseConverter } = require('../helpers/helper');
 const { betCreationModel } = require('../models/products/betCreationModel');
 const { eventCreationModel } = require('../models/products/eventCreationModel');
 const { eventModificationModel } = require('../models/products/eventModificationModel');
@@ -153,11 +153,7 @@ const createNewBetRepository = async (betData) => {
     statEmitter.emit('newBet');
 
     ['bet_amount', 'event_id', 'away_team', 'home_team', 'odds_id', 'start_at', 'updated_at', 'created_at', 'user_id'].forEach((whatakey) => {
-        const index = whatakey.indexOf('_');
-        let newKey = whatakey.replace('_', '');
-        newKey = newKey.split('');
-        newKey[index] = newKey[index].toUpperCase();
-        newKey = newKey.join('');
+        const newKey = snakeCaseToCamelCaseConverter(whatakey);
         newBet[newKey] = newBet[whatakey];
         delete newBet[whatakey];
     });
